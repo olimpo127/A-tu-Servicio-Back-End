@@ -89,6 +89,19 @@ def get_users():
         result.append(user.serialize())
     return jsonify(result)
 
+@app.route("/user/<int:id>", methods=["GET"])
+def get_user(id):
+    user = User.query.get(id)
+    if user is not None:
+        return jsonify({
+            "username": user.username,
+            "password": user.password,
+            "age": user.age,
+            "nickname": user.nickname
+            })
+    else:
+        return jsonify({"message": f"User with ID {id} not found."}), 404
+
 @app.route("/pokemon/list", methods=["GET"])
 def get_pokemons():
     pokemons = Pokemon.query.all()
@@ -96,6 +109,18 @@ def get_pokemons():
     for pokemon in pokemons:
         result.append(pokemon.serialize())
     return jsonify(result)
+
+@app.route("/pokemon/<int:id>", methods=["GET"])
+def get_pokemon(id):
+    pokemon = Pokemon.query.get(id)
+    if pokemon is not None:
+        return jsonify({
+            "pokemon_id": pokemon.pokemon_id,
+            "name": pokemon.name,
+            "is_favorite": pokemon.is_favorite
+            })
+    else:
+        return jsonify({"message": f"Pokemon with ID {id} not found."}), 404
 
 @app.route("/favorites/list", methods=["GET"])
 def get_favorites():
@@ -105,8 +130,12 @@ def get_favorites():
         result.append(favorite.serialize())
     return jsonify(result)
 
+
+
+
+
 @app.route("/features/list", methods=["GET"])
-def get_featuress():
+def get_features():
     features = Feature.query.all()
     result = []
     for feature in features:
