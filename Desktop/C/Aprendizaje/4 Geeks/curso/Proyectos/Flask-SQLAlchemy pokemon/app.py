@@ -204,7 +204,7 @@ def update_stats(id):
             
             db.session.commit()
             
-            return jsonify("Stats updated"), 200
+            return jsonify("Stat updated"), 200
     
     return jsonify("Stats not found"), 418
 
