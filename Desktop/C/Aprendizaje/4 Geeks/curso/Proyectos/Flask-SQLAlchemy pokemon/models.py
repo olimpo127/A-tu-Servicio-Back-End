@@ -25,7 +25,7 @@ class Pokemon(db.Model):
     pokemon_id = db.Column(db.Integer)
     name = db.Column(db.String(50), nullable=False)
     is_favorite = db.Column(db.Boolean)
-    #feature = db.relationship("Feature")
+    feature = db.relationship("Feature")
     stat = db.relationship("Stat")
     favorite = db.relationship("Favorite")
     def serialize(self):
@@ -47,30 +47,30 @@ class Favorite(db.Model):
             "name": self.name,
         }
 
-#class Feature(db.Model):
-    #__tablename__ = "feature"
-    #id = db.Column(db.Integer, primary_key=True)
-    #pokemon_id = db.Column(db.Integer, db.ForeignKey("pokemon.pokemon_id"))
-    #name = db.Column(db.String(50), nullable=False)
-    #type1 = db.Column(db.String(20), nullable=False)
-    #type2 = db.Column(db.String(20))
-    #height = db.Column(db.Integer)
-    #weight = db.Column(db.Integer)
-    #ability1 = db.Column(db.String(50), nullable=False)
-    #ability2 = db.Column(db.String(50))
-    #ability3 = db.Column(db.String(50))
-    #def serialize(self):
-        #return {
-            #"pokemon_id": self.pokemon_id,
-            #"name": self.name,
-            #"type1": self.type1,
-            #"type2": self.type2,
-            #"height": self.height,
-            #"weight": self.weight,
-            #"ability1": self.ability1,
-            #"ability2": self.ability2,
-            #"ability3": self.ability3
-        #}
+class Feature(db.Model):
+    __tablename__ = "feature"
+    id = db.Column(db.Integer, primary_key=True)
+    _pokemon_id = db.Column(db.Integer, db.ForeignKey("pokemon.pokemon_id"))
+    name = db.Column(db.String(50), nullable=False)
+    type1 = db.Column(db.String(20), nullable=False)
+    type2 = db.Column(db.String(20))
+    height = db.Column(db.Integer)
+    weight = db.Column(db.Integer)
+    ability1 = db.Column(db.String(50), nullable=False)
+    ability2 = db.Column(db.String(50))
+    ability3 = db.Column(db.String(50))
+    def serialize(self):
+        return {
+            "pokemon_id": self._pokemon_id,
+            "name": self.name,
+            "type1": self.type1,
+            "type2": self.type2,
+            "height": self.height,
+            "weight": self.weight,
+            "ability1": self.ability1,
+            "ability2": self.ability2,
+            "ability3": self.ability3
+        }
 
 class Stat(db.Model):
     __tablename__ = "stat"

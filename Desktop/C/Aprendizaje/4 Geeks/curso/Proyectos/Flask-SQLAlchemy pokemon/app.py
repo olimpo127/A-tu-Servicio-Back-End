@@ -1,5 +1,5 @@
-from flask import Flask,request, jsonify
-from models import db, User, Pokemon, Favorite, Stat #, Feature
+from flask import Flask, request, jsonify
+from models import db, User, Pokemon, Favorite, Stat, Feature
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
@@ -46,23 +46,23 @@ def create_favorite():
 
     return "Favorite Pokemon added"
 
-#@app.route("/feature", methods=["POST"])
-#def create_feature():
-    #feature = Feature()
-    #feature.pokemon_id = request.json.get("pokemon_id")
-    #feature.name = request.json.get("name")
-    #feature.type1 = request.json.get("type1")
-    #feature.type2 = request.json.get("type2")
-    #feature.height = request.json.get("height")
-    #feature.weight = request.json.get("weight")
-    #feature.ability1 = request.json.get("ability1")
-    #feature.ability2 = request.json.get("ability2")
-    #feature.ability3 = request.json.get("ability3")
+@app.route("/features", methods=["POST"])
+def create_feature():
+    feature = Feature()
+    feature._pokemon_id = request.json.get("pokemon_id")
+    feature.name = request.json.get("name")
+    feature.type1 = request.json.get("type1")
+    feature.type2 = request.json.get("type2")
+    feature.height = request.json.get("height")
+    feature.weight = request.json.get("weight")
+    feature.ability1 = request.json.get("ability1")
+    feature.ability2 = request.json.get("ability2")
+    feature.ability3 = request.json.get("ability3")
 
-    #db.session.add(feature)
-    #db.session.commit()
+    db.session.add(feature)
+    db.session.commit()
 
-    #return "Pokemon features added"
+    return "Pokemon features added"
 
 @app.route("/stats", methods=["POST"])
 def create_stats():
@@ -105,14 +105,13 @@ def get_favorites():
         result.append(favorite.serialize())
     return jsonify(result)
 
-#feature get method pending, first sove the post method
-#@app.route("/favorites/list", methods=["GET"])
-#def get_favorites():
-    #favorites = Favorite.query.all()
-    #result = []
-    #for favorite in favorites:
-        #result.append(favorite.serialize())
-    #return jsonify(result)
+@app.route("/features/list", methods=["GET"])
+def get_featuress():
+    features = Feature.query.all()
+    result = []
+    for feature in features:
+        result.append(feature.serialize())
+    return jsonify(result)
 
 @app.route("/stats/list", methods=["GET"])
 def get_stats():
@@ -182,6 +181,32 @@ def update_favorites(id):
             return jsonify("Favorite updated"), 200
     
     return jsonify("Favorite not found"), 418
+
+@app.route("/features/<int:id>", methods=["PUT", "DELETE"])
+def update_features(id):
+    feature = Feature.query.get(id)
+    if feature is not None:
+        if request.method == "DELETE":
+            db.session.delete(feature)
+            db.session.commit()
+
+            return jsonify("Features deleted"), 204
+        else:
+            feature._pokemon_id = request.json.get("pokemon_id")
+            feature.name = request.json.get("name")
+            feature.type1 = request.json.get("type1")
+            feature.type2 = request.json.get("type2")
+            feature.height = request.json.get("height")
+            feature.weight = request.json.get("weight")
+            feature.ability1 = request.json.get("ability1")
+            feature.ability2 = request.json.get("ability2")
+            feature.ability3 = request.json.get("ability3")
+            
+            db.session.commit()
+            
+            return jsonify("Feature updated"), 200
+    
+    return jsonify("Feature not found"), 418
 
 @app.route("/stats/<int:id>", methods=["PUT", "DELETE"])
 def update_stats(id):
