@@ -45,7 +45,7 @@ function App() {
         <br />
         {house && (
           <p style={{ background: house.color }}>
-            <strong>Congratulations {name}, you have been sorted into {house.name}!</strong>
+            <strong>Congratulations {name}, you have been sorted into {house.name}!!</strong>
           </p>
         )}
       </div>
