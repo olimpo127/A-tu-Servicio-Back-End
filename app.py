@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from models import db, User
+from models import db, User, Service
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
@@ -72,6 +72,77 @@ def update_user(id):
             return jsonify("User updated"), 200
     
     return jsonify("User not found"), 418
+
+
+@app.route("/services", methods=["POST"])
+def create_service():
+    service = Service()
+    service.user_id = request.json.get("user_id")
+    service.service_description = request.json.get("service_description")
+    service.price = request.json.get("price")
+    service.mobileNumber = request.json.get("mobileNumber")
+    service.city = request.json.get("city")
+    service.comuna = request.json.get("comuna")
+    service.street = request.json.get("street")
+    service.socialNetworks = request.json.get("socialNetworks")
+    service.image = request.json.get("image")
+
+    db.session.add(service)
+    db.session.commit()
+
+    return "Service created!"    
+
+@app.route("/services/list", methods=["GET"])
+def get_services():
+    services = Service.query.all()
+    result = []
+    for service in services:
+        result.append(service.serialize())
+    return jsonify(result)
+
+@app.route("/services/<int:id>", methods=["GET"])
+def get_service(id):
+    service = Service.query.get(id)
+    if service is not None:
+        return jsonify({
+            "service_id": self.service_id,
+            "service_description": self.service_description,
+            "price": self.price,
+            "mobileNumber": self.mobileNumber,
+            "city": self.city,
+            "comuna": self.comuna,
+            "street": self.street,
+            "socialNetworks": self.socialNetworks,
+            "image": self.image
+            })
+    else:
+        return jsonify({"message": f"Service with ID {id} not found."}), 404
+
+@app.route("/services/<int:id>", methods=["PUT", "DELETE"])
+def update_service(id):
+    service = Service.query.get(id)
+    if service is not None:
+        if request.method == "DELETE":
+            db.session.delete(service)
+            db.session.commit()
+
+            return jsonify("Deleted"), 204
+        else:
+            service.user_id = request.json.get("user_id")
+            service.service_description = request.json.get("service_description")
+            service.price = request.json.get("price")
+            service.mobileNumber = request.json.get("mobileNumber")
+            service.city = request.json.get("city")
+            service.comuna = request.json.get("comuna")
+            service.street = request.json.get("street")
+            service.socialNetworks = request.json.get("socialNetworks")
+            service.image = request.json.get("image")
+            
+            db.session.commit()
+            
+            return jsonify("Service updated"), 200
+    
+    return jsonify("Service not found"), 418
 
 with app.app_context():
     db.create_all()
