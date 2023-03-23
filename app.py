@@ -23,7 +23,7 @@ def create_user():
     db.session.add(user)
     db.session.commit()
 
-    return "User created"
+    return "User created!"
 
 @app.route("/users/list", methods=["GET"])
 def get_users():
