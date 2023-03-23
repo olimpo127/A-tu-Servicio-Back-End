@@ -7,7 +7,7 @@ db.init_app(app)
 
 @app.route("/")
 def home():
-    return "OJEDA HERE!"
+    return "OJEDA HERE!!"
 
 #------------------------------------#USERS---------------------------------------------------------
 @app.route("/users", methods=["POST"])
