@@ -11,7 +11,7 @@ class User(db.Model):
     username = db.Column(db.String(50), nullable=False)
     email =db.Column(db.String(50), nullable=False)
     password = db.Column(db.String(20), nullable=False)
-    picture = db.String(db.String(100000))
+    picture = db.Column(db.String(10000))
     def serialize(self):
         return {
             "name": self.name,
