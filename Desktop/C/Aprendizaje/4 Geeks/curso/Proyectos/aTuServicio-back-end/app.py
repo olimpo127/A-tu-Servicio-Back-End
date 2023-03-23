@@ -7,7 +7,7 @@ db.init_app(app)
 
 @app.route("/")
 def home():
-    return "OJEDA HERE"
+    return "OJEDA HERE!"
 
 #------------------------------------#USERS---------------------------------------------------------
 @app.route("/users", methods=["POST"])
@@ -147,7 +147,7 @@ def update_service(id):
     return jsonify("Service not found"), 418
     
 
-    
+
 #------------------------------------#History---------------------------------------------------------
 @app.route("/histories", methods=["POST"])
 def create_history():
