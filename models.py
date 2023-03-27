@@ -25,33 +25,34 @@ class User(db.Model):
 class Service(db.Model):
     __tablename__ = 'service'
     id = db.Column(db.Integer, primary_key=True)
-    service_id = db.Column(db.Integer, foreign_key=True)
-    service_description = db.Column(db.String(200))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    title = db.Column(db.String(100))
     price = db.Column(db.String(20))
-    mobileNumber = db.Column(db.String(20))
+    category = db.Column(db.String(20))
+    availability = db.Column(db.String(20))
     city = db.Column(db.String(20))
+    region = db.Column(db.String(20))
     comuna = db.Column(db.String(20))
-    street = db.Column(db.String(20))
-    socialNetworks = db.Column(db.String(50))
+    service_description = db.Column(db.String(200))
     image = db.Column(db.String(20))
     def serialize(self):
         return {
-            "service_id": self.service_id,
-            "service_description": self.service_description,
+            "title":self.title,
             "price": self.price,
-            "mobileNumber": self.mobileNumber,
+            "category":self.category,
+            "availability":self.availability,
             "city": self.city,
+            "region":self.region,
             "comuna": self.comuna,
-            "street": self.street,
-            "socialNetworks": self.socialNetworks,
+            "service_description": self.service_description,
             "image": self.image
          }
 
 class History(db.Model):
     __tablename__ = 'history'
     id = db.Column(db.Integer, primary_key=True)
-    user_id_seller = db.Column(db.Integer, foreign_key=True)
-    user_id_buyer = db.Column(db.Integer, foreign_key=True)
+    #user_id_seller = db.Column(db.Integer, db.ForeignKey('user_id_seller'))
+    #user_id_buyer = db.Column(db.Integer, db.ForeignKey('user_id_buyer'))
     transaction_id = db.Column(db.String(50), nullable=False)
     def serialize(self):
         return {
@@ -63,9 +64,9 @@ class History(db.Model):
 class Message(db.Model):
     __tablename__ = 'message'
     id = db.Column(db.Integer, primary_key=True)
-    user_id_seller = db.Column(db.Integer, foreign_key=True)
-    user_id_buyer = db.Column(db.Integer, foreign_key=True)
-    service_id = db.Column(db.Integer, foreign_key=True)
+    #user_id_seller = db.Column(db.Integer, db.ForeignKey('user_id_seller'))
+    #user_id_buyer = db.Column(db.Integer, db.ForeignKey('user_id_buyer'))
+    service_id = db.Column(db.Integer, db.ForeignKey('service.id'))
     text = db.Column(db.String(200))
     def serialize(self):
         return {
@@ -78,9 +79,9 @@ class Message(db.Model):
 class Transaction(db.Model):
     __tablename__ = 'transaction'
     id = db.Column(db.Integer, primary_key=True)
-    user_id_seller = db.Column(db.Integer, foreign_key=True)
-    user_id_buyer = db.Column(db.Integer, foreign_key=True)
-    service_id = db.Column(db.Integer, foreign_key=True)
+    #user_id_seller = db.Column(db.Integer, db.ForeignKey('user_id_seller'))
+    #user_id_buyer = db.Column(db.Integer, db.ForeignKey('user_id_buyer'))
+    service_id = db.Column(db.Integer, db.ForeignKey('service.id'))
     status = db.Column(db.String(20))
     rating  = db.Column(db.Integer)
     rating_text = db.Column(db.String(200))

@@ -1,9 +1,15 @@
 from flask import Flask, request, jsonify
 from models import db, User, Service, History, Message, Transaction
+from flask_cors import  CORS
+from flask_migrate import Migrate
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 db.init_app(app)
+
+migrate = Migrate(app, db)
+CORS(app)
 
 @app.route("/")
 def home():
@@ -23,7 +29,7 @@ def create_user():
     db.session.add(user)
     db.session.commit()
 
-    return "User created!"
+    return jsonify({"message": "User Created"}), 200
 
 @app.route("/users/list", methods=["GET"])
 def get_users():
@@ -46,7 +52,7 @@ def get_user(id):
             "picture": user.picture
             })
     else:
-        return jsonify({"message": f"User with ID {id} not found."}), 404
+        return jsonify({"message": "User with ID {id} not found."}), 404
 
 
 
@@ -79,20 +85,20 @@ def update_user(id):
 @app.route("/services", methods=["POST"])
 def create_service():
     service = Service()
-    service.user_id = request.json.get("user_id")
-    service.service_description = request.json.get("service_description")
+    service.title = request.json.get("title")
     service.price = request.json.get("price")
-    service.mobileNumber = request.json.get("mobileNumber")
+    service.category = request.json.get("category")
+    service.availability = request.json.get("availability")
     service.city = request.json.get("city")
+    service.region = request.json.get("region")
     service.comuna = request.json.get("comuna")
-    service.street = request.json.get("street")
-    service.socialNetworks = request.json.get("socialNetworks")
+    service.service_description = request.json.get("service_description")
     service.image = request.json.get("image")
 
     db.session.add(service)
     db.session.commit()
 
-    return "Service created!"    
+    return ({"message": "service Created"}), 200    
 
 @app.route("/services/list", methods=["GET"])
 def get_services():
@@ -325,7 +331,8 @@ def update_transaction(id):
     
     return jsonify("Transaction not found"), 418
 
-with app.app_context():
-    db.create_all()
+#with app.app_context():
+ #   db.create_all()
 
-app.run(host="localhost", port="5000")
+if __name__== "__main__":
+    app.run(host="localhost", port="5000")
