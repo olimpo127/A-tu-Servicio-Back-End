@@ -1,10 +1,11 @@
 from flask import Flask, request, jsonify
 from models import db, User, Service, History, Message, Transaction
+from flask_cors import CORS
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 db.init_app(app)
-
+CORS(app)
 @app.route("/")
 def home():
     return "OJEDA HERE!!"
