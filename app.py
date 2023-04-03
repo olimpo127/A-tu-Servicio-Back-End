@@ -334,5 +334,19 @@ def update_transaction(id):
 #with app.app_context():
  #   db.create_all()
 
+@app.route("/actualizar_user", methods=["PUT"])
+def actualizar_user():
+    hola = request.get_json()
+    #usuario = User.query.filter(email=)
+    
+   
+   
+   # db.session.add(history)
+    #db.session.commit()
+
+    return "Perfil Actualizado!"
+
+
+
 if __name__== "__main__":
-    app.run(host="localhost", port="5000")
+    app.run(host="localhost", port="5000", debug=True)
