@@ -44,6 +44,7 @@ def get_user(id):
     user = User.query.get(id)
     if user is not None:
         return jsonify({
+            "id": user.id,
             "name": user.name,
             "lastname": user.lastname,
             "username": user.username,
@@ -334,17 +335,49 @@ def update_transaction(id):
 #with app.app_context():
  #   db.create_all()
 
-@app.route("/actualizar_user", methods=["PUT"])
-def actualizar_user():
-    hola = request.get_json()
+@app.route("/actualizar_user/<int:id>" , methods=["PUT"])
+def actualizar_user(id):
+    #hola = request.get_json()
     #usuario = User.query.filter(email=)
-    
-   
-   
-   # db.session.add(history)
-    #db.session.commit()
+    user=User.query.get(id)
+    if user is not None:
+        user.name=request.json.get("name")
+        user.username=request.json.get("username")
+        user.email=request.json.get("email")
+        db.session.commit()
+        return jsonify("Perfil Actualizado!")
 
-    return "Perfil Actualizado!"
+    return "Perfil No Encontrado"
+
+#@app.route("/actualizar_password/<int:id>" , methods=["PUT"])
+#def actualizar_user(id):
+    #hola = request.get_json()
+    #usuario = User.query.filter(email=)
+   # user=User.query.get(id)
+    #if user is not None:
+     #   user.password=request.json.get("password")
+      #  db.session.commit()
+       # return jsonify("Contraseña Actualizada!")
+
+   # return "Perfil No Encontrado"
+
+
+
+
+@app.route("/user/<int:id>", methods=["DELETE"])
+def delete_user(id):
+    #hola = request.get_json()
+    #usuario = User.query.filter(email=)
+    user=User.query.get(id)
+    if user is not None:
+       db.session.delete(user)
+       db.session.commit()
+       return "Perfil Eliminado"
+
+    return "Perfil No Encontrado"
+
+
+
 
 
 
