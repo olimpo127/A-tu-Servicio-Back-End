@@ -12,6 +12,7 @@ app = Flask(__name__)
 app.config ['UPLOAD'] = upload_folder
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['JWT_SECRET_KEY'] = "atuservicio"
+app.config['DEBUG'] = "on"
 db.init_app(app)
 
 migrate = Migrate(app, db)
@@ -377,6 +378,38 @@ def update_transaction(id):
             return jsonify("Transaction updated"), 200
     
     return jsonify("Transaction not found"), 418
+
+
+#------------------------------------#post---------------------------------------------------------
+
+def search_posts(query):
+    posts = Service.query.filter(Service.title.ilike).all()
+    return posts
+
+@app.route("/posts/<search>", methods=["GET", "POST"])
+def get_posts(search = None):
+    posts = Service.query.all()
+
+    if request.method == 'POST':
+        query = search
+        posts = search_posts(query)
+        return posts
+    return posts
+
+@app.route('/posts/<search>')
+@app.route('/posts/<search>/<region>/')
+@app.route('/post/s<search>/<region>/<comuna>')
+def search(name = None, region = None, email = None):
+    my_data = {
+        'search':search,
+        'region': region,
+        'comuna':comuna
+    }
+    
+    
+    return render_template('hola.html', data = my_data)
+
+
 
 #with app.app_context():
  #   db.create_all()
