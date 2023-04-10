@@ -1,9 +1,23 @@
-from flask import Flask, request, jsonify
+import os
+from flask import Flask, request, jsonify, send_from_directory
 from models import db, User, Service, History, Message, Transaction
+from flask_cors import  CORS
+from flask_migrate import Migrate
+from werkzeug.utils import secure_filename
+from flask_bcrypt import Bcrypt, generate_password_hash,check_password_hash
+from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
 
+upload_folder = os.path.join('static', 'uploads')
 app = Flask(__name__)
+app.config ['UPLOAD'] = upload_folder
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+app.config['JWT_SECRET_KEY'] = "atuservicio"
 db.init_app(app)
+
+migrate = Migrate(app, db)
+jwt = JWTManager(app)
+bcrypt = Bcrypt(app) 
+CORS(app)
 
 @app.route("/")
 def home():
@@ -17,13 +31,52 @@ def create_user():
     user.lastname = request.json.get("lastname")
     user.username = request.json.get("username")
     user.email = request.json.get("email")
-    user.password = request.json.get("password")
+    password = request.json.get("password")
+    password_hash = generate_password_hash(password)
+    user.password = password_hash
     user.picture = request.json.get("picture")
 
     db.session.add(user)
     db.session.commit()
 
-    return "User created!"
+    return jsonify({"message": "User Created"}), 200
+
+@app.route("/users/login", methods=["POST"])
+def login():
+    username = request.json.get("username")
+    password = request.json.get("password")
+    user = User.query.filter_by(username=username).first()
+    if user is not None:
+        is_valid = check_password_hash(user.password, password)
+        if is_valid:
+            access_token = create_access_token(identity=username)
+            return jsonify({
+                "token":access_token
+            }),200
+        else:
+            return jsonify({
+                "msg":"User or password not exist or not valid"
+            }), 400
+
+@app.route("/users/avatar/<int:id>",methods=["POST", "GET"])
+def upload_file(id):
+    if request.method =="GET":
+        user = User.query.get(id)
+        avatar = user.picture
+        return send_from_directory(app.config['UPLOAD'],avatar)
+    else:
+        if 'file' not in request.files:
+            return jsonify({'error':'no files selected'}), 400
+        else:
+            file = request.files['file']
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD'],filename))
+            user = User.query.get(id)
+            user.picture = filename
+            db.session.commit()
+            return jsonify({
+                "msg": "image saved"
+            }),200
 
 @app.route("/users/list", methods=["GET"])
 def get_users():
@@ -46,7 +99,7 @@ def get_user(id):
             "picture": user.picture
             })
     else:
-        return jsonify({"message": f"User with ID {id} not found."}), 404
+        return jsonify({"message": "User with ID {id} not found."}), 404
 
 
 
@@ -79,18 +132,18 @@ def update_user(id):
 @app.route("/services", methods=["POST"])
 def create_service():
     service = Service()
-    service.user_id = request.json.get("user_id")
-    service.service_description = request.json.get("service_description")
-    service.price = request.json.get("price")
-    service.mobileNumber = request.json.get("mobileNumber")
-    service.adress = request.json.get("adress")
     service.title = request.json.get("title")
+    service.price = request.json.get("price")
+    service.category = request.json.get("category")
+    service.availability = request.json.get("availability")
+    service.adress = request.json.get("adress")
+    service.service_description = request.json.get("service_description")
     service.image = request.json.get("image")
 
     db.session.add(service)
     db.session.commit()
 
-    return "Service created!"    
+    return ({"message": "service Created"}), 200    
 
 @app.route("/services/list", methods=["GET"])
 def get_services():
@@ -319,7 +372,8 @@ def update_transaction(id):
     
     return jsonify("Transaction not found"), 418
 
-with app.app_context():
-    db.create_all()
+#with app.app_context():
+ #   db.create_all()
 
-app.run(host="localhost", port="5000")
+if __name__== "__main__":
+    app.run(host="localhost", port="5000")
