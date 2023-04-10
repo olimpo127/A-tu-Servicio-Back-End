@@ -401,13 +401,15 @@ def actualizar_password(id):
     #hola = request.get_json()
     #usuario = User.query.filter(email=)
     user=User.query.get(id)
+    password=request.get_json()
+    print(password)
     if user is not None:
-        user.password=request.json.get("password")
+        user.password=request.json.get("contraseña")
+        #user.password=request.get_json()
         db.session.commit()
         return jsonify("Contraseña Actualizada!")
 
     return "Perfil No Encontrado"
-
 
 
 
