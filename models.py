@@ -26,24 +26,20 @@ class Service(db.Model):
     __tablename__ = 'service'
     id = db.Column(db.Integer, primary_key=True)
     service_id = db.Column(db.Integer, foreign_key=True)
+    title =db.Column(db.String(200))
     service_description = db.Column(db.String(200))
     price = db.Column(db.String(20))
     mobileNumber = db.Column(db.String(20))
-    city = db.Column(db.String(20))
-    comuna = db.Column(db.String(20))
-    street = db.Column(db.String(20))
-    socialNetworks = db.Column(db.String(50))
+    adress = db.Column(db.String(20))
     image = db.Column(db.String(20))
     def serialize(self):
         return {
             "service_id": self.service_id,
+            "title": self.title,
             "service_description": self.service_description,
             "price": self.price,
             "mobileNumber": self.mobileNumber,
-            "city": self.city,
-            "comuna": self.comuna,
-            "street": self.street,
-            "socialNetworks": self.socialNetworks,
+            "adress": self.adress,
             "image": self.image
          }
 

@@ -83,10 +83,8 @@ def create_service():
     service.service_description = request.json.get("service_description")
     service.price = request.json.get("price")
     service.mobileNumber = request.json.get("mobileNumber")
-    service.city = request.json.get("city")
-    service.comuna = request.json.get("comuna")
-    service.street = request.json.get("street")
-    service.socialNetworks = request.json.get("socialNetworks")
+    service.adress = request.json.get("adress")
+    service.title = request.json.get("title")
     service.image = request.json.get("image")
 
     db.session.add(service)
@@ -111,10 +109,8 @@ def get_service(id):
             "service_description": service.service_description,
             "price": service.price,
             "mobileNumber": service.mobileNumber,
-            "city": service.city,
-            "comuna": service.comuna,
-            "street": service.street,
-            "socialNetworks": service.socialNetworks,
+            "adress": service.adress,
+            "title": service.title,
             "image": service.image
             })
     else:
@@ -134,12 +130,10 @@ def update_service(id):
             service.service_description = request.json.get("service_description")
             service.price = request.json.get("price")
             service.mobileNumber = request.json.get("mobileNumber")
-            service.city = request.json.get("city")
-            service.comuna = request.json.get("comuna")
-            service.street = request.json.get("street")
-            service.socialNetworks = request.json.get("socialNetworks")
-            service.image = request.json.get("image")
-            
+            service.adress = request.json.get("adress")
+            service.title = request.json.get("title")
+            service.image = request.json.get("image")  
+          
             db.session.commit()
             
             return jsonify("Service updated"), 200
