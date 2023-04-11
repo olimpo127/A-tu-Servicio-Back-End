@@ -12,6 +12,7 @@ app = Flask(__name__)
 app.config ['UPLOAD'] = upload_folder
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['JWT_SECRET_KEY'] = "atuservicio"
+app.config['DEBUG'] = "on"
 db.init_app(app)
 
 migrate = Migrate(app, db)
@@ -377,6 +378,56 @@ def update_transaction(id):
             return jsonify("Transaction updated"), 200
     
     return jsonify("Transaction not found"), 418
+
+
+
+
+#------------------------------------#post---------------------------------------------------------
+
+
+
+@app.route("/feed/", methods=["GET"])#@app.route('/posts/<search>' )
+def get_posts():
+    posts = Service.query.all()
+    result = [] 
+    for post in posts:
+       result.append(post.serialize())
+    return jsonify(result)
+    
+
+@app.route("/feed/<search>", methods=["GET"])
+def search_posts(search):
+    posts = Service.query.filter(Service.title.ilike(search))
+    result = []  
+    for post in posts:
+        result.append(post.serialize())
+    return jsonify(result)
+        
+        
+@app.route("/hola", methods=["GET"])
+def prueba1():
+    posts = User.query.filter(User.username.endswith('luis'))
+    result = [] 
+    for post in posts:
+        result.append(post.serialize())
+    return jsonify(result)
+   
+    
+   # if request.method == 'POST':
+#    query = request.form.get('search')
+ ##      return posts
+   
+#@app.route('/posts/<search>')
+#@app.route('/posts/<search>/<region>/')
+#@app.route('/post/s<search>/<region>/<comuna>')
+#def search(name = None, region = None, email = None):
+ #   my_data = {
+  #      'search':search,
+   #     'region': region,
+    #    'comuna':comuna
+    #}
+    
+ 
 
 #with app.app_context():
  #   db.create_all()
