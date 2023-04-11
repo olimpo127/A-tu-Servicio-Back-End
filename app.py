@@ -379,7 +379,7 @@ def update_transaction(id):
     return jsonify("Transaction not found"), 418
 
 #with app.app_context():
- #   db.create_all()
+   #db.create_all()
 
 if __name__== "__main__":
     app.run(host="localhost", port="5000")
