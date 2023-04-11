@@ -387,7 +387,7 @@ def update_transaction(id):
 
 
 @app.route("/feed/", methods=["GET"])#@app.route('/posts/<search>' )
-def get_posts():
+def get_posts_feed():
     posts = Service.query.all()
     result = [] 
     for post in posts:
@@ -396,7 +396,7 @@ def get_posts():
     
 
 @app.route("/feed/<search>", methods=["GET"])
-def search_posts(search):
+def search_posts_feed(search):
     posts = Service.query.filter(Service.title.ilike(search))
     result = []  
     for post in posts:
@@ -428,6 +428,36 @@ def prueba1():
     #}
     
  
+#------------------------------------#post---------------------------------------------------------
+
+def search_posts(query):
+    posts = Service.query.filter(Service.title.ilike).all()
+    return posts
+
+@app.route("/posts/<search>", methods=["GET", "POST"])
+def get_posts(search = None):
+    posts = Service.query.all()
+
+    if request.method == 'POST':
+        query = search
+        posts = search_posts(query)
+        return posts
+    return posts
+
+@app.route('/posts/<search>')
+@app.route('/posts/<search>/<region>/')
+@app.route('/post/s<search>/<region>/<comuna>')
+def search(name = None, region = None, email = None):
+    my_data = {
+        'search':search,
+        'region': region,
+        'comuna':comuna
+    }
+    
+    
+    return render_template('hola.html', data = my_data)
+
+
 
 #with app.app_context():
  #   db.create_all()
