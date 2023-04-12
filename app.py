@@ -385,77 +385,48 @@ def update_transaction(id):
 #------------------------------------#post---------------------------------------------------------
 
 
-
-@app.route("/feed/", methods=["GET"])#@app.route('/posts/<search>' )
+@app.route("/feed", methods=["GET"])
 def get_posts_feed():
-    posts = Service.query.all()
-    result = [] 
-    for post in posts:
-       result.append(post.serialize())
-    return jsonify(result)
-    
-
-@app.route("/feed/<search>", methods=["GET"])
-def search_posts_feed(search):
-    posts = Service.query.filter(Service.title.ilike(search))
+    posts = Service.query.all()    
+    if not posts:
+        return jsonify({'message':'feed no encontrado'}), 200       
     result = []  
     for post in posts:
         result.append(post.serialize())
     return jsonify(result)
+          
         
+  
+@app.route("/feed/<search>", methods=["GET"])  
+def search_posts_feed(search):
+    if search != '':
+        posts = Service.query.filter(Service.title.ilike(search)).all()
+        if not posts:
+            return jsonify({'message':'titulo no encontrado'}), 200
+        result = [] 
+        for post in posts:
+            result.append(post.serialize())
+        return jsonify(result) 
+    else:    
+        posts = Service.query.all()               
+        result = []  
+        for post in posts:
+            result.append(post.serialize())
+        return jsonify(result)
+
+
+@app.route('/<int:id>', methods = ['GET'])
+def get_post_id(id):
+    result = Service.query.get(id)
+    if not result:
+        return jsonify({'message':'Id no encontrado'}), 404
+    return jsonify(result.serialize())
         
-@app.route("/hola", methods=["GET"])
-def prueba1():
-    posts = User.query.filter(User.username.endswith('luis'))
-    result = [] 
-    for post in posts:
-        result.append(post.serialize())
-    return jsonify(result)
-   
-    
-   # if request.method == 'POST':
-#    query = request.form.get('search')
- ##      return posts
-   
-#@app.route('/posts/<search>')
-#@app.route('/posts/<search>/<region>/')
-#@app.route('/post/s<search>/<region>/<comuna>')
-#def search(name = None, region = None, email = None):
- #   my_data = {
-  #      'search':search,
-   #     'region': region,
-    #    'comuna':comuna
-    #}
-    
- 
-#------------------------------------#post---------------------------------------------------------
 
-def search_posts(query):
-    posts = Service.query.filter(Service.title.ilike).all()
-    return posts
 
-@app.route("/posts/<search>", methods=["GET", "POST"])
-def get_posts(search = None):
-    posts = Service.query.all()
 
-    if request.method == 'POST':
-        query = search
-        posts = search_posts(query)
-        return posts
-    return posts
 
-@app.route('/posts/<search>')
-@app.route('/posts/<search>/<region>/')
-@app.route('/post/s<search>/<region>/<comuna>')
-def search(name = None, region = None, email = None):
-    my_data = {
-        'search':search,
-        'region': region,
-        'comuna':comuna
-    }
-    
-    
-    return render_template('hola.html', data = my_data)
+
 
 
 
