@@ -51,7 +51,8 @@ def login():
         if is_valid:
             access_token = create_access_token(identity=username)
             return jsonify({
-                "token":access_token
+                "token":access_token,
+                "id":user.id 
             }),200
         else:
             return jsonify({
@@ -89,14 +90,14 @@ def get_users():
 @app.route("/users/<int:id>", methods=["GET"])
 def get_user(id):
     user = User.query.get(id)
+    print(user.name)
     if user is not None:
         return jsonify({
-            "id": user.id,
+           "id": user.id,
             "name": user.name,
             "lastname": user.lastname,
             "username": user.username,
             "email": user.email,
-            "password": user.password,
             "picture": user.picture
             })
     else:
@@ -382,6 +383,8 @@ def update_transaction(id):
 #with app.app_context():
  #   db.create_all()
 
+#------------------------------------#Actualizar Profile---------------------------------------------------------
+
 @app.route("/actualizar_user/<int:id>" , methods=["PUT"])
 def actualizar_user(id):
     #hola = request.get_json()
@@ -424,8 +427,6 @@ def delete_user(id):
        return "Perfil Eliminado"
 
     return "Perfil No Encontrado"
-
-
 
 
 
