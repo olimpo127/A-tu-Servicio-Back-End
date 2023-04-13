@@ -48,6 +48,7 @@ def login():
     user = User.query.filter_by(username=username).first()
     if user is not None:
         is_valid = check_password_hash(user.password, password)
+        
         if is_valid:
             access_token = create_access_token(identity=username)
             return jsonify({
@@ -138,11 +139,10 @@ def create_service():
     service.price = request.json.get("price")
     service.category = request.json.get("category")
     service.availability = request.json.get("availability")
-    service.city = request.json.get("city")
-    service.region = request.json.get("region")
-    service.comuna = request.json.get("comuna")
+    service.adress = request.json.get("adress")
+    service.mobile_number =request.json.get("mobile_number")
     service.service_description = request.json.get("service_description")
-    service.image = request.json.get("image")
+    
 
     db.session.add(service)
     db.session.commit()
@@ -165,12 +165,10 @@ def get_service(id):
             "service_id": service.service_id,
             "service_description": service.service_description,
             "price": service.price,
-            "mobileNumber": service.mobileNumber,
-            "city": service.city,
-            "comuna": service.comuna,
-            "street": service.street,
-            "socialNetworks": service.socialNetworks,
-            "image": service.image
+            "mobile_number": service.mobile_number,
+            "adress": service.adress,
+            "title": service.title,
+           
             })
     else:
         return jsonify({"message": f"Service with ID {id} not found."}), 404
@@ -188,13 +186,11 @@ def update_service(id):
             service.user_id = request.json.get("user_id")
             service.service_description = request.json.get("service_description")
             service.price = request.json.get("price")
-            service.mobileNumber = request.json.get("mobileNumber")
-            service.city = request.json.get("city")
-            service.comuna = request.json.get("comuna")
-            service.street = request.json.get("street")
-            service.socialNetworks = request.json.get("socialNetworks")
-            service.image = request.json.get("image")
-            
+            service.mobile_number = request.json.get("mobile_number")
+            service.adress = request.json.get("adress")
+            service.title = request.json.get("title")
+              
+          
             db.session.commit()
             
             return jsonify("Service updated"), 200

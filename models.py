@@ -28,24 +28,24 @@ class Service(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     title = db.Column(db.String(100))
     price = db.Column(db.String(20))
+    mobile_number = db.Column(db.String(20))
     category = db.Column(db.String(20))
     availability = db.Column(db.String(20))
-    city = db.Column(db.String(20))
-    region = db.Column(db.String(20))
-    comuna = db.Column(db.String(20))
+    adress = db.Column(db.String(100))
+
     service_description = db.Column(db.String(200))
-    image = db.Column(db.String(20))
+    
     def serialize(self):
         return {
             "title":self.title,
             "price": self.price,
             "category":self.category,
             "availability":self.availability,
-            "city": self.city,
-            "region":self.region,
-            "comuna": self.comuna,
+            "adress":self.adress,
+            "title":self.region,
+            "mobile_number": self.mobile_number,
             "service_description": self.service_description,
-            "image": self.image
+            
          }
 
 class History(db.Model):
