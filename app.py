@@ -385,7 +385,7 @@ def update_transaction(id):
 #------------------------------------#post---------------------------------------------------------
 
 
-@app.route("/feed", methods=["GET"])
+@app.route("/feed/", methods=["GET"])
 def get_posts_feed():
     posts = Service.query.all()    
     if not posts:
@@ -393,27 +393,28 @@ def get_posts_feed():
     result = []  
     for post in posts:
         result.append(post.serialize())
+    print(result)
     return jsonify(result)
           
         
   
-@app.route("/feed/<search>", methods=["GET"])  
+@app.route("/feed/<search>", methods=["GET" , "POST"])  
 def search_posts_feed(search):
-    if search != '':
-        posts = Service.query.filter(Service.title.ilike(search)).all()
+    posts = Service.query.all()
+        
+    if request.method == 'POST':
+        query = request.form.get('search')
+        posts = Service.query.filter(Service.title.ilike(f'%{search}%')).all()
+
         if not posts:
             return jsonify({'message':'titulo no encontrado'}), 200
         result = [] 
         for post in posts:
-            result.append(post.serialize())
+            result.append(post.serialize())    
         return jsonify(result) 
-    else:    
-        posts = Service.query.all()               
-        result = []  
-        for post in posts:
-            result.append(post.serialize())
-        return jsonify(result)
-
+    
+    return jsonify([post.serialize() for post in posts])
+    
 
 @app.route('/<int:id>', methods = ['GET'])
 def get_post_id(id):
