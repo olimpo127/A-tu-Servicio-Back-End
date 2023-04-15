@@ -398,7 +398,7 @@ def search_posts_feed(search):
     posts = Service.query.all()
         
     if request.method == 'POST':
-        query = request.form.get('search')
+        #search = request.form.get('search')
         posts = Service.query.filter(Service.title.ilike(f'%{search}%')).all()
 
         if not posts:
@@ -409,7 +409,9 @@ def search_posts_feed(search):
         return jsonify(result) 
     
     return jsonify([post.serialize() for post in posts])
-    
+
+
+   
 
 @app.route('/<int:id>', methods = ['GET'])
 def get_post_id(id):
@@ -425,9 +427,9 @@ def get_post_id(id):
 
 
 
+with app.app_context():
+ db.create_all()
 
-#with app.app_context():
- # db.create_all()
 
 if __name__== "__main__":
     app.run(host="localhost", port="5000")
