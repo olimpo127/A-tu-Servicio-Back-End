@@ -94,3 +94,5 @@ class Transaction(db.Model):
             "rating": self.rating,
             "rating_text": self.rating_text
         }
+
+
