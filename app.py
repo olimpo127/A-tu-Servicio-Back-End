@@ -12,6 +12,7 @@ app = Flask(__name__)
 app.config['UPLOAD'] = upload_folder
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['JWT_SECRET_KEY'] = "atuservicio"
+app.config['DEBUG'] = "on"
 db.init_app(app)
 
 migrate = Migrate(app, db)
@@ -145,11 +146,10 @@ def create_service():
     service.price = request.json.get("price")
     service.category = request.json.get("category")
     service.availability = request.json.get("availability")
-    service.city = request.json.get("city")
-    service.region = request.json.get("region")
-    service.comuna = request.json.get("comuna")
+    service.adress = request.json.get("adress")
+    service.mobile_number =request.json.get("mobile_number")
     service.service_description = request.json.get("service_description")
-    service.image = request.json.get("image")
+    
 
     db.session.add(service)
     db.session.commit()
@@ -197,13 +197,11 @@ def get_service(id):
             "service_id": service.service_id,
             "service_description": service.service_description,
             "price": service.price,
-            "mobileNumber": service.mobileNumber,
-            "city": service.city,
-            "comuna": service.comuna,
-            "street": service.street,
-            "socialNetworks": service.socialNetworks,
-            "image": service.image
-        })
+            "mobile_number": service.mobile_number,
+            "adress": service.adress,
+            "title": service.title,
+           
+            })
     else:
         return jsonify({"message": "Service with ID {id} not found."}), 404
 
@@ -222,13 +220,11 @@ def update_service(id):
             service.service_description = request.json.get(
                 "service_description")
             service.price = request.json.get("price")
-            service.mobileNumber = request.json.get("mobileNumber")
-            service.city = request.json.get("city")
-            service.comuna = request.json.get("comuna")
-            service.street = request.json.get("street")
-            service.socialNetworks = request.json.get("socialNetworks")
-            service.image = request.json.get("image")
-
+            service.mobile_number = request.json.get("mobile_number")
+            service.adress = request.json.get("adress")
+            service.title = request.json.get("title")
+              
+          
             db.session.commit()
 
             return jsonify("Service updated"), 200
@@ -420,8 +416,62 @@ def update_transaction(id):
 
     return jsonify("Transaction not found"), 418
 
-# with app.app_context():
- #   db.create_all()
+
+
+
+#------------------------------------#post---------------------------------------------------------
+
+
+@app.route("/feed/", methods=["GET"])
+def get_posts_feed():
+    posts = Service.query.all()    
+    if not posts:
+        return jsonify({'message':'feed no encontrado'}), 200       
+    result = []  
+    for post in posts:
+        result.append(post.serialize())
+    print(result)
+    return jsonify(result)
+          
+        
+  
+@app.route("/feed/<search>", methods=["GET" , "POST"])  
+def search_posts_feed(search):
+    posts = Service.query.all()
+        
+    if request.method == 'POST':
+        #search = request.form.get('search')
+        posts = Service.query.filter(Service.title.ilike(f'%{search}%')).all()
+
+        if not posts:
+            return jsonify({'message':'titulo no encontrado'}), 200
+        result = [] 
+        for post in posts:
+            result.append(post.serialize())    
+        return jsonify(result) 
+    
+    return jsonify([post.serialize() for post in posts])
+
+
+   
+
+@app.route('/<int:id>', methods = ['GET'])
+def get_post_id(id):
+    result = Service.query.get(id)
+    if not result:
+        return jsonify({'message':'Id no encontrado'}), 404
+    return jsonify(result.serialize())
+        
+
+
+
+
+
+
+
+with app.app_context():
+ db.create_all()
+
 
 
 if __name__ == "__main__":
