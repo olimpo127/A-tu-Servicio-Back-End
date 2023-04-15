@@ -6,6 +6,7 @@ from flask_migrate import Migrate
 from werkzeug.utils import secure_filename
 from flask_bcrypt import Bcrypt, generate_password_hash,check_password_hash
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
+from flask_cors import CORS
 
 upload_folder = os.path.join('static', 'uploads')
 app = Flask(__name__)
@@ -19,6 +20,7 @@ jwt = JWTManager(app)
 bcrypt = Bcrypt(app) 
 CORS(app)
 
+CORS(app)
 @app.route("/")
 def home():
     return "OJEDA HERE!!"
@@ -46,16 +48,17 @@ def login():
     username = request.json.get("username")
     password = request.json.get("password")
     user = User.query.filter_by(username=username).first()
+    is_valid=None 
     if user is not None:
         is_valid = check_password_hash(user.password, password)
         
-        if is_valid:
+    if is_valid:
             access_token = create_access_token(identity=username)
             return jsonify({
                 "token":access_token,
                 "id":user.id 
             }),200
-        else:
+    else:
             return jsonify({
                 "msg":"User or password not exist or not valid"
             }), 400
