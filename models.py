@@ -14,6 +14,7 @@ class User(db.Model):
     picture = db.Column(db.String(10000))
     def serialize(self):
         return {
+            "id": self.id,
             "name": self.name,
             "lastname": self.lastname,
             "username": self.username,
