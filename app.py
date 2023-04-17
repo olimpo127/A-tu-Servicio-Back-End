@@ -6,6 +6,8 @@ from flask_migrate import Migrate
 from werkzeug.utils import secure_filename
 from flask_bcrypt import Bcrypt, generate_password_hash,check_password_hash
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
+from flask_cors import CORS
+
 
 upload_folder = os.path.join('static', 'uploads')
 app = Flask(__name__)
@@ -20,6 +22,7 @@ jwt = JWTManager(app)
 bcrypt = Bcrypt(app) 
 CORS(app)
 
+CORS(app)
 @app.route("/")
 def home():
     return "OJEDA HERE!!"
@@ -47,17 +50,23 @@ def login():
     username = request.json.get("username")
     password = request.json.get("password")
     user = User.query.filter_by(username=username).first()
+    is_valid=None 
     if user is not None:
         is_valid = check_password_hash(user.password, password)
-        if is_valid:
+        
+    if is_valid:
             access_token = create_access_token(identity=username)
             return jsonify({
-                "token":access_token
+                "token":access_token,
+                "id":user.id 
             }),200
-        else:
+    else:
             return jsonify({
                 "msg":"User or password not exist or not valid"
             }), 400
+
+
+            
 
 @app.route("/users/avatar/<int:id>",methods=["POST", "GET"])
 def upload_file(id):
@@ -90,13 +99,14 @@ def get_users():
 @app.route("/users/<int:id>", methods=["GET"])
 def get_user(id):
     user = User.query.get(id)
+    print(user.name)
     if user is not None:
         return jsonify({
+           "id": user.id,
             "name": user.name,
             "lastname": user.lastname,
             "username": user.username,
             "email": user.email,
-            "password": user.password,
             "picture": user.picture
             })
     else:
@@ -431,5 +441,54 @@ with app.app_context():
  db.create_all()
 
 
+#------------------------------------#Actualizar Profile---------------------------------------------------------
+
+@app.route("/actualizar_user/<int:id>" , methods=["PUT"])
+def actualizar_user(id):
+    #hola = request.get_json()
+    #usuario = User.query.filter(email=)
+    user=User.query.get(id)
+    if user is not None:
+        user.username=request.json.get("username")
+        user.email=request.json.get("email")
+        db.session.commit()
+        return jsonify("Perfil Actualizado!")
+
+    return "Perfil No Encontrado"
+
+@app.route("/actualizar_password/<int:id>" , methods=["PUT"])
+def actualizar_password(id):
+    #hola = request.get_json()
+    #usuario = User.query.filter(email=)
+    user=User.query.get(id)
+    password=request.get_json()
+    print(password)
+    if user.password is not None:
+        user.password=request.json.get("contraseña")
+        password_hash = generate_password_hash("contraseña")
+        user.password = password_hash
+        #user.password=request.get_json()
+        db.session.commit()
+        return jsonify("Contraseña Actualizada!")
+
+    return "Perfil No Encontrado"
+
+
+
+@app.route("/user/<int:id>", methods=["DELETE"])
+def delete_user(id):
+    #hola = request.get_json()
+    #usuario = User.query.filter(email=)
+    user=User.query.get(id)
+    if user is not None:
+       db.session.delete(user)
+       db.session.commit()
+       return "Perfil Eliminado"
+
+    return "Perfil No Encontrado"
+
+
+
+
 if __name__== "__main__":
-    app.run(host="localhost", port="5000")
+    app.run(host="localhost", port="5000", debug=True)
