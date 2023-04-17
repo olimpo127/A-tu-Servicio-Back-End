@@ -8,11 +8,13 @@ from flask_bcrypt import Bcrypt, generate_password_hash,check_password_hash
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
 from flask_cors import CORS
 
+
 upload_folder = os.path.join('static', 'uploads')
 app = Flask(__name__)
 app.config ['UPLOAD'] = upload_folder
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['JWT_SECRET_KEY'] = "atuservicio"
+app.config['DEBUG'] = "on"
 db.init_app(app)
 
 migrate = Migrate(app, db)
@@ -62,6 +64,9 @@ def login():
             return jsonify({
                 "msg":"User or password not exist or not valid"
             }), 400
+
+
+            
 
 @app.route("/users/avatar/<int:id>",methods=["POST", "GET"])
 def upload_file(id):
@@ -379,8 +384,62 @@ def update_transaction(id):
     
     return jsonify("Transaction not found"), 418
 
-#with app.app_context():
- #   db.create_all()
+
+
+
+#------------------------------------#post---------------------------------------------------------
+
+
+@app.route("/feed/", methods=["GET"])
+def get_posts_feed():
+    posts = Service.query.all()    
+    if not posts:
+        return jsonify({'message':'feed no encontrado'}), 200       
+    result = []  
+    for post in posts:
+        result.append(post.serialize())
+    print(result)
+    return jsonify(result)
+          
+        
+  
+@app.route("/feed/<search>", methods=["GET" , "POST"])  
+def search_posts_feed(search):
+    posts = Service.query.all()
+        
+    if request.method == 'POST':
+        #search = request.form.get('search')
+        posts = Service.query.filter(Service.title.ilike(f'%{search}%')).all()
+
+        if not posts:
+            return jsonify({'message':'titulo no encontrado'}), 200
+        result = [] 
+        for post in posts:
+            result.append(post.serialize())    
+        return jsonify(result) 
+    
+    return jsonify([post.serialize() for post in posts])
+
+
+   
+
+@app.route('/<int:id>', methods = ['GET'])
+def get_post_id(id):
+    result = Service.query.get(id)
+    if not result:
+        return jsonify({'message':'Id no encontrado'}), 404
+    return jsonify(result.serialize())
+        
+
+
+
+
+
+
+
+with app.app_context():
+ db.create_all()
+
 
 #------------------------------------#Actualizar Profile---------------------------------------------------------
 
@@ -390,7 +449,6 @@ def actualizar_user(id):
     #usuario = User.query.filter(email=)
     user=User.query.get(id)
     if user is not None:
-        user.name=request.json.get("name")
         user.username=request.json.get("username")
         user.email=request.json.get("email")
         db.session.commit()
@@ -405,8 +463,10 @@ def actualizar_password(id):
     user=User.query.get(id)
     password=request.get_json()
     print(password)
-    if user is not None:
+    if user.password is not None:
         user.password=request.json.get("contraseña")
+        password_hash = generate_password_hash("contraseña")
+        user.password = password_hash
         #user.password=request.get_json()
         db.session.commit()
         return jsonify("Contraseña Actualizada!")

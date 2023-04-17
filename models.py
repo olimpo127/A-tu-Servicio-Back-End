@@ -32,7 +32,7 @@ class Service(db.Model):
     category = db.Column(db.String(20))
     availability = db.Column(db.String(20))
     adress = db.Column(db.String(100))
-
+    region = db.Column(db.String(50))
     service_description = db.Column(db.String(200))
     
     def serialize(self):
@@ -42,7 +42,7 @@ class Service(db.Model):
             "category":self.category,
             "availability":self.availability,
             "adress":self.adress,
-            "title":self.region,
+            "region":self.region,
             "mobile_number": self.mobile_number,
             "service_description": self.service_description,
             
@@ -94,3 +94,5 @@ class Transaction(db.Model):
             "rating": self.rating,
             "rating_text": self.rating_text
         }
+
+
