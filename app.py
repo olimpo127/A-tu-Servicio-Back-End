@@ -161,7 +161,7 @@ def create_service():
 def upload_image(id):
     if request.method == "GET":
         service = Service.query.get(id)
-        image = service.image
+        image = service.service_image
         return send_from_directory(app.config['UPLOAD'], image)
     else:
         if 'file' not in request.files:
@@ -173,7 +173,7 @@ def upload_image(id):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD'], filename))
             service = Service.query.get(id)
-            service.image = filename
+            service.service_image = filename
             db.session.commit()
             return jsonify({
                 "msg": "image saved"
@@ -455,7 +455,7 @@ def search_posts_feed(search):
 
    
 
-@app.route('/<int:id>', methods = ['GET'])
+@app.route('/feed/<int:id>', methods = ['GET'])
 def get_post_id(id):
     result = Service.query.get(id)
     if not result:

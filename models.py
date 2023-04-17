@@ -33,19 +33,20 @@ class Service(db.Model):
     category = db.Column(db.String(20))
     availability = db.Column(db.String(20))
     adress = db.Column(db.String(100))
-    region = db.Column(db.String(50))
     service_description = db.Column(db.String(200))
-    
+    service_image = db.Column(db.String(200))
+
     def serialize(self):
         return {
+            "id":self.id,
             "title":self.title,
             "price": self.price,
             "category":self.category,
             "availability":self.availability,
             "adress":self.adress,
-            "region":self.region,
             "mobile_number": self.mobile_number,
             "service_description": self.service_description,
+            "service_image":self.service_image
             
          }
 
