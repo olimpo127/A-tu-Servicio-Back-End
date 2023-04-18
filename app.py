@@ -382,14 +382,16 @@ def update_transaction(id):
 
 @app.route("/feed/", methods=["GET"])
 def get_posts_feed():
-    posts = Service.query.all()    
+    posts = Service.query.all()
     if not posts:
         return jsonify({'message':'feed no encontrado'}), 200       
     result = []  
+    
     for post in posts:
         result.append(post.serialize())
     print(result)
     return jsonify(result)
+   
    
           
 def search_post(search):
@@ -399,13 +401,8 @@ def search_post(search):
   
 @app.route("/feed/<search>", methods=["GET"])  
 def search_posts_feed(search):
-    #posts = Service.query.all()
-    print(search) 
-    #if request.method == 'POST':
-        #search = request.form.get('search')
-        #searchword = request.args.get('search')
     posts = search_post(search)
-
+    
     if not posts:
         return jsonify({'message':'titulo no encontrado'}), 200
     
@@ -415,7 +412,7 @@ def search_posts_feed(search):
     print(result)    
     return jsonify(result) 
     
-    #return jsonify([post.serialize() for post in posts])
+    
 
 
    
