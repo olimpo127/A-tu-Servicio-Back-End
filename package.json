@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "save": "^2.9.0"
+  }
+}
