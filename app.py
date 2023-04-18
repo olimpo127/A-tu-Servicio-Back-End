@@ -390,25 +390,32 @@ def get_posts_feed():
         result.append(post.serialize())
     print(result)
     return jsonify(result)
+   
           
-        
+def search_post(search):
+    posts = Service.query.filter(Service.title.ilike(f'%{search}%')).all()
+    return posts 
   
-@app.route("/feed/<search>", methods=["GET" , "POST"])  
+  
+@app.route("/feed/<search>", methods=["GET"])  
 def search_posts_feed(search):
-    posts = Service.query.all()
-        
-    if request.method == 'POST':
+    #posts = Service.query.all()
+    print(search) 
+    #if request.method == 'POST':
         #search = request.form.get('search')
-        posts = Service.query.filter(Service.title.ilike(f'%{search}%')).all()
+        #searchword = request.args.get('search')
+    posts = search_post(search)
 
-        if not posts:
-            return jsonify({'message':'titulo no encontrado'}), 200
-        result = [] 
-        for post in posts:
-            result.append(post.serialize())    
-        return jsonify(result) 
+    if not posts:
+        return jsonify({'message':'titulo no encontrado'}), 200
     
-    return jsonify([post.serialize() for post in posts])
+    result = [] 
+    for post in posts:
+        result.append(post.serialize()) 
+    print(result)    
+    return jsonify(result) 
+    
+    #return jsonify([post.serialize() for post in posts])
 
 
    

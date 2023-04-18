@@ -45,7 +45,7 @@ class Service(db.Model):
             "region":self.region,
             "mobile_number": self.mobile_number,
             "service_description": self.service_description,
-            
+            "id":self.id
          }
 
 class History(db.Model):
