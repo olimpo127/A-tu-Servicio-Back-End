@@ -147,6 +147,7 @@ def update_user(id):
 @app.route("/services", methods=["POST"])
 def create_service():
     service = Service()
+    service.user_id = request.json.get("user_id")
     service.title = request.json.get("title")
     service.price = request.json.get("price")
     service.category = request.json.get("category")
@@ -154,6 +155,8 @@ def create_service():
     service.adress = request.json.get("adress")
     service.mobile_number =request.json.get("mobile_number")
     service.service_description = request.json.get("service_description")
+    service.service_image = request.json.get("service_image")
+
     
 
     db.session.add(service)
@@ -167,7 +170,10 @@ def upload_image(id):
     if request.method == "GET":
         service = Service.query.get(id)
         image = service.service_image
-        return send_from_directory(app.config['UPLOAD'], image)
+        if image is not None:
+          return send_from_directory(app.config['UPLOAD'], image)
+        else:
+            return jsonify({"msg": "null" })
     else:
         if 'file' not in request.files:
             print(request.files)

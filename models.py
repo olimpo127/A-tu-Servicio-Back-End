@@ -26,7 +26,7 @@ class User(db.Model):
 class Service(db.Model):
     __tablename__ = 'service'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_id = db.Column(db.String, db.ForeignKey('user.id'))
     title = db.Column(db.String(100))
     price = db.Column(db.String(20))
     mobile_number = db.Column(db.String(20))
@@ -39,6 +39,7 @@ class Service(db.Model):
     def serialize(self):
         return {
             "id":self.id,
+            "user_id":self.user_id,
             "title":self.title,
             "price": self.price,
             "category":self.category,
