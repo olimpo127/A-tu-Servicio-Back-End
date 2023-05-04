@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+<<<<<<< HEAD
+    "flask": "^0.2.10"
+=======
+    "bcrypt": "^5.1.0",
+    "save": "^2.9.0"
+>>>>>>> b8479bb0e768184fda2bcc1dbaba5eed742ea067
+  }
+}

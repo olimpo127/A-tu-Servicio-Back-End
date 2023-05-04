@@ -6,8 +6,13 @@ name = "pypi"
 [packages]
 flask = "*"
 flask-sqlalchemy = "*"
+flask-cors = "*"
+flask-jwt-extended = "*"
+flask-bcrypt = "*"
+flask-migrate = "*"
 
 [dev-packages]
+autopep8 = "*"
 
 [requires]
 python_version = "3.11"

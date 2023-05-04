@@ -8,12 +8,13 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20), nullable=False)
     lastname = db.Column(db.String(20), nullable=False)
-    username = db.Column(db.String(50), nullable=False)
+    username = db.Column(db.String(50), nullable=False, unique=True)
     email =db.Column(db.String(50), nullable=False)
-    password = db.Column(db.String(20), nullable=False)
+    password = db.Column(db.String(100), nullable=False)
     picture = db.Column(db.String(10000))
     def serialize(self):
         return {
+            "id": self.id,
             "name": self.name,
             "lastname": self.lastname,
             "username": self.username,
@@ -25,33 +26,36 @@ class User(db.Model):
 class Service(db.Model):
     __tablename__ = 'service'
     id = db.Column(db.Integer, primary_key=True)
-    service_id = db.Column(db.Integer, foreign_key=True)
-    service_description = db.Column(db.String(200))
+    user_id = db.Column(db.String, db.ForeignKey('user.id'))
+    title = db.Column(db.String(100))
     price = db.Column(db.String(20))
-    mobileNumber = db.Column(db.String(20))
-    city = db.Column(db.String(20))
-    comuna = db.Column(db.String(20))
-    street = db.Column(db.String(20))
-    socialNetworks = db.Column(db.String(50))
-    image = db.Column(db.String(20))
+    mobile_number = db.Column(db.String(20))
+    category = db.Column(db.String(20))
+    availability = db.Column(db.String(20))
+    adress = db.Column(db.String(100))
+    service_description = db.Column(db.String(200))
+    service_image = db.Column(db.String(200))
+
     def serialize(self):
         return {
-            "service_id": self.service_id,
-            "service_description": self.service_description,
+            "id":self.id,
+            "user_id":self.user_id,
+            "title":self.title,
             "price": self.price,
-            "mobileNumber": self.mobileNumber,
-            "city": self.city,
-            "comuna": self.comuna,
-            "street": self.street,
-            "socialNetworks": self.socialNetworks,
-            "image": self.image
+            "category":self.category,
+            "availability":self.availability,
+            "adress":self.adress,
+            "mobile_number": self.mobile_number,
+            "service_description": self.service_description,
+            "service_image":self.service_image
+            
          }
 
 class History(db.Model):
     __tablename__ = 'history'
     id = db.Column(db.Integer, primary_key=True)
-    user_id_seller = db.Column(db.Integer, foreign_key=True)
-    user_id_buyer = db.Column(db.Integer, foreign_key=True)
+    #user_id_seller = db.Column(db.Integer, db.ForeignKey('user_id_seller'))
+    #user_id_buyer = db.Column(db.Integer, db.ForeignKey('user_id_buyer'))
     transaction_id = db.Column(db.String(50), nullable=False)
     def serialize(self):
         return {
@@ -63,9 +67,9 @@ class History(db.Model):
 class Message(db.Model):
     __tablename__ = 'message'
     id = db.Column(db.Integer, primary_key=True)
-    user_id_seller = db.Column(db.Integer, foreign_key=True)
-    user_id_buyer = db.Column(db.Integer, foreign_key=True)
-    service_id = db.Column(db.Integer, foreign_key=True)
+    #user_id_seller = db.Column(db.Integer, db.ForeignKey('user_id_seller'))
+    #user_id_buyer = db.Column(db.Integer, db.ForeignKey('user_id_buyer'))
+    service_id = db.Column(db.Integer, db.ForeignKey('service.id'))
     text = db.Column(db.String(200))
     def serialize(self):
         return {
@@ -78,9 +82,9 @@ class Message(db.Model):
 class Transaction(db.Model):
     __tablename__ = 'transaction'
     id = db.Column(db.Integer, primary_key=True)
-    user_id_seller = db.Column(db.Integer, foreign_key=True)
-    user_id_buyer = db.Column(db.Integer, foreign_key=True)
-    service_id = db.Column(db.Integer, foreign_key=True)
+    #user_id_seller = db.Column(db.Integer, db.ForeignKey('user_id_seller'))
+    #user_id_buyer = db.Column(db.Integer, db.ForeignKey('user_id_buyer'))
+    service_id = db.Column(db.Integer, db.ForeignKey('service.id'))
     status = db.Column(db.String(20))
     rating  = db.Column(db.Integer)
     rating_text = db.Column(db.String(200))
@@ -93,3 +97,5 @@ class Transaction(db.Model):
             "rating": self.rating,
             "rating_text": self.rating_text
         }
+
+
